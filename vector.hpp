@@ -2,76 +2,93 @@
 # define VECTOR_HPP
 
 #include <memory>
-
+#include "ft_iterator.hpp"
 namespace ft
 {
 	template<typename T, class Allocator = std::allocator<T>>
-	class random_access_iterator {
-
-	};
-	
-	template<typename T, class Allocator = std::allocator<T>>
-	class reverse_iterator {
-
-	};
-
-
-	template<typename T, class Allocator = std::allocator<T>>
 	class vector {
 		public:
-			typedef Allocator allocator_type;
-			typedef T value_type;
-			typedef value_type &reference;
-			typedef const value_type &const_reference;
-			typedef typename allocator_type::pointer pointer;
-			typedef const typename allocator_type::const_pointer const_pointer;
-			typedef ft::random_access_iterator<value_type> iterator;
-			typedef ft::random_access_iterator<const value_type> const_iterator;
-			typedef ft::reverse_iterator<iterator> reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
-			typedef typename allocator_traits<allocator_type>::difference_type difference_type;
-			typedef typename allocator_traits<allocator_type>::size_type size_type;
+			typedef T										value_type;
+			typedef Allocator<value_type>					allocator_type;
+			typedef allocator_type::reference				reference;
+			typedef allocator_type::const_reference			const_reference;
+			typedef typename allocator_type::pointer		pointer;
+			typedef typename allocator_type::const_pointer	const_pointer;
+			typedef ft::normal_iterator<pointer, vector> 	iterator;
+			typedef ft::normal_iterator<const_pointer, vector>	const_iterator;
+			typedef ft::reverse_iterator<iterator>			reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>	const_reverse_iterator;
+			typedef std::ptrdiff_t							difference_type;
+			typedef std::size_t								size_type;
 
-			// allocator
-			// 	이 개체에 사용할 할당자 클래스입니다.get_allocator 개체에 대 한 할당자 클래스를 반환 합니다.
 
-			// 	count
-			// 		생성된 벡터에 있는 요소의 수입니다.
-
-			// 	value
-			// 		생성된 벡터에 있는 요소의 값입니다.
-
-			// 	source
-			// 		해당 복사본으로 벡터를 생성할 벡터입니다.
-
-			// 	first
-			// 		복사할 요소의 범위에서 첫 번째 요소의 위치입니다.
-
-			// 	last
-			// 		복사할 요소의 범위를 벗어난 첫 번째 요소의 위치입니다.
-
-			// 	init_list
-			// 		initializer_list복사할 요소를 포함 하는입니다.
-			vector(const allocator_type &alloc = allocator_type())
+			explicit vector(const allocator_type &allocator = allocator_type())
+				:_start(NULL), _finish(NULL), _end_of_storage(NULL), _alloc(allocator)
 			{}
-			explicit vector(const Allocator &allocator)
-			{}
-			explicit vector(size_type count, const value_type &val = value_type(), const allocator_type &alloc= allocator_type())
+			explicit vector(size_type count, const value_type& val = value_type(), const allocator_type &allocator= allocator_type())
+				:_start(NULL), _finish(NULL), _end_of_storage(NULL), _alloc(allocator)
+			{
+				if (count > _alloc.max_size())
+			}
+			template <class InputIterator>
+			vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type())
 			{}
 			vector(const vector &source)
 			{}
-			vector(vector &&source)
+			~vector()
 			{}
-			vector(initializer_list<T> init_list, const Allocator &allocator)
+			vector& operator=(const vector&x)
 			{}
+
+			iterator begin(){return iterator(_start);}
+			const_iterator begin() const {return const_iterator(_start);}
+			iterator end() {return iterator(_finish);}
+			const_iterator end() const {return const_iterator(_finish);}
+			reverse_iterator rbegin() {return reverse_iterator(end();)}
+			const_reverse_iterator rbegin() const {return const_reverse_iterator(end());}
+			reverse_iterator rend() {return reverse_iterator(begin());}
+			const_reverse_iterator rend() const {return const_reverse_iterator(end());}
+			size_type size() const {return size_type(_finish - _start);}
+			size_type max_size() const 
+			{
+
+				return 
+			}
+			bool empty() const { return begin() == end() }
+			void resize(size_type n, value_type val = value_type())
+			{
+			}
+			size_type capacity() const {}
+			void reserve(size_type n) {}
+			reference front() {}
+			const_reference front() const {}
+			reference operator[](size_type n) {}
+			const_reference operator[](size_type n) const {}
+			reference at(size_type n) {}
+			const_reference at(size_type n) const {}
 			template <class InputIterator>
-			vector(InputIterator first, InputIterator last)
+  			void assign (InputIterator first, InputIterator last)
 			{}
+			void assign (size_type n, const value_type& val){}
+			iterator insert (iterator position, const value_type& val) {}
+			void insert (iterator position, size_type n, const value_type& val){}
 			template <class InputIterator>
-			vector(InputIterator first, InputIterator last, const allocator_type &allocator)
-			{}
+    		void insert (iterator position, InputIterator first, InputIterator last) {}
+			iterator erase (iterator position){}
+			iterator erase (iterator first, iterator last){}
+			void push_back (const value_type& val) {}
+			void pop_back(){}
+			void clear(){}
+			void swap (vector& x){}
+			allocator_type get_allocator() const {}
+
+
 		private:
-			_allo
+			pointer _start;
+			pointer _finish;
+			pointer _end_of_storage;
+			allocator_type _alloc;
+
 	};
 
 }
