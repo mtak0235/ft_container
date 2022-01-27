@@ -4,6 +4,7 @@
 		"map": "cpp",
 		"vector": "cpp",
 		"initializer_list": "cpp",
-		"memory": "cpp"
+		"memory": "cpp",
+		"set": "cpp"
 	}
 }
