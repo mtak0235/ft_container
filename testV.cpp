@@ -9,6 +9,7 @@ using namespace std;
 int main( )
 {
    vector <double> v;
+   vector <double> second(4, 100);
    vector <double> ::iterator vIter;
    vector <double> :: allocator_type vAlloc;
 
