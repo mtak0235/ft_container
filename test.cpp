@@ -12,6 +12,27 @@ class Test
 		int getT() const { return this->t;}
 };
 
+class West {
+	public:
+		int *numptr;
+
+		West(int num)
+		{
+			std::cout << "생성자 실행" << std::endl;
+			numptr = new int;
+			*numptr = num;
+		}
+		void print_num()
+		{
+			std::cout << *(this->numptr) << std::endl;
+		}
+		~West()
+		{
+			std::cout << *numptr << "소멸자 실행" << std::endl;
+			delete numptr;
+		}
+};
+
 std::ostream	&operator<<(std::ostream &out, Test const &t)
 {
 	out << t.getN() << " " << t.getT();
@@ -20,14 +41,30 @@ std::ostream	&operator<<(std::ostream &out, Test const &t)
 
 int main()
 {
-	//allocator test
+	std::allocator<West> talloc;
+	std::allocator<West>::pointer tp;
+	tp = talloc.allocate(5);
+	for (int i = 0; i < 5; i++)
+	{
+		talloc.construct(tp + i, i);
+	}
+	for (int i = 0; i < 4; i++)
+	{
+		std::cout << "destroy" << std::endl;
+		talloc.destroy(tp + i);
+	}
+	talloc.deallocate(tp, 5);
+	// allocator test
 	std::allocator<int> a1;
-	int *a = a1.allocate(1);
-	std::cout << a[0] << std::endl;
+	// int *a = a1.allocate(1);
+	std::allocator<int>::pointer a = a1.allocate(1);
+	std::cout << "after allocate " << a[0] << std::endl;
 	a1.construct(a, 13);
-	std::cout << a[0] << std::endl;
+	std::cout << "after construct " <<  a[0] << std::endl;
 	a1.destroy(a);
+	std::cout <<"after destroy " << a[0] << std::endl;
 	a1.deallocate(a, 1);
+	std::cout <<"after deallocate " << a[0] << std::endl;
 
 	std::allocator<float> f1;
 	float *f = f1.allocate(3);
