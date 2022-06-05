@@ -5,7 +5,6 @@
 		"vector": "cpp",
 		"initializer_list": "cpp",
 		"memory": "cpp",
-<<<<<<< HEAD
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
@@ -46,8 +45,5 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"typeinfo": "cpp"
-=======
-		"set": "cpp"
->>>>>>> 9850f4ec93d7d5e43ff68735022c6260ffdb76a5
 	}
 }
