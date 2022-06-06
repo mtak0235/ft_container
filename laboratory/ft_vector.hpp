@@ -4,6 +4,7 @@
 #include <memory>
 #include "iterator/iterator.hpp"
 #include "iterator/vector_iterator.hpp"
+#include "utils/utils.hpp"
 
 namespace ft
 {
@@ -26,26 +27,49 @@ public:
 	typedef typename allocator_type::size_type size_type;
 
 	/* constructor */
+
+	/**
+	 * @brief default 생성자
+	 * 
+	 * @param allocator 
+	 */
 	explicit vector(const allocator_type &allocator = allocator_type())
-		: _start(NULL), _finish(NULL), _end_of_cap(NULL), _allocator(allocator)
+		: _allocator(allocator), _size(0), _begin(NULL), _capacity(0)
 	{
 	}
-	explicit vector(size_type count, const value_type &val = value_type(), const allocator_type &allocator = allocator_type())
-		: _start(NULL), _finish(NULL), _end_of_cap(NULL), _allocator(allocator)
+	/**
+	 * @brief fill 생성자
+	 * 
+	 * @param count : 초기 컨테이너 크기
+	 * @param val : 컨테이너를 초기화 할 값
+	 * @param allocator
+	 */
+	explicit vector(size_type n, const value_type &val = value_type(), const allocator_type &allocator = allocator_type())
+		: _begin(NULL), _allocator(allocator)
 	{
-		if (count > 0)
+		if (n > 0)
 		{
-			if (count > _allocator.max_size())
+			if (n > _allocator.max_size())
 				throw std::length_error("cannot create ft::vector larger than max_size()");
-			_start = _allocator.allocate(count);
-			_end_of_cap = _start + count;
-			for (_finish = _start; _finish < _end_of_cap; _finish++)
-				_allocator.construct(_finish, val);
+			_size = n;
+			_capacity = n;
+			_begin = _allocator.allocate(n);
+			for (pointer i = _begin; i < _size; i++)
+				_allocator.construct(i, val);
 		}
 	}
+	/**
+	 * @brief range 생성자
+	 * 
+	 * @tparam InputIterator 
+	 * @param first 첫 element를 가리키는 iterator
+	 * @param last  마지막 다음을 가리키는 iterator
+	 * @param allocator 
+	 */
 	template <class InputIterator>
-	vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type())
-		: _start(NULL), _finish(NULL), _end_of_cap(NULL), _allocator(allocator)
+	vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type(),
+	typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator)
+		: _allocator(allocator)
 	{
 		if (first > last)
 			throw std::bad_alloc();
@@ -242,12 +266,20 @@ public:
 		x._allocator = tmpAlloc;
 	}
 	allocator_type get_allocator() const {}
-
+/**
+ * @brief 멤버 변수
+ * _begin :  벡터 내부에 할당된 메모리의 시작 주소
+ * _allocator : 할당자 클래스 변수
+ * _size: 벡터 요소 수
+ * _capacity: 벡터에 넣을 수 있는 요소 수
+ */
 private:
-	pointer _start;
-	pointer _finish;
-	pointer _end_of_cap;
+	pointer _begin;
+	// pointer _end;
+	// pointer _end_cap;
 	allocator_type _allocator;
+	size_type _size;
+	size_type _capacity;
 };
 
 template <class T, class Alloc>
