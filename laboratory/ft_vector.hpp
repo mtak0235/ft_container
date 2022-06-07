@@ -60,7 +60,7 @@ public:
 	}
 	/**
 	 * @brief range 생성자
-	 * 
+	 * point! : template meta programming에서 if문은 템플릿 특수화를 통해 구현됨
 	 * @tparam InputIterator 
 	 * @param first 첫 element를 가리키는 iterator
 	 * @param last  마지막 다음을 가리키는 iterator
@@ -68,16 +68,19 @@ public:
 	 */
 	template <class InputIterator>
 	vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type(),
-	typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator)
-		: _allocator(allocator)
+	typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+		: _begin(NULL), _size(0), _allocator(allocator)
 	{
+		difference_type d = ft::dis
 		if (first > last)
-			throw std::bad_alloc();
+			throw std::length_error("vector");
+		
 		this->clear();
 		this->insert(this->begin(), first, last);
 	}
+
 	vector(const vector &source)
-		: _start(NULL), _finish(NULL), _end_of_cap(NULL), _allocator(source._allocator)
+		: _begin(NULL), _size(0), _allocator(source._allocator)
 	{
 		insert(begin(), source.begin(), source.end());
 	}
@@ -247,6 +250,8 @@ public:
 	{
 		while (this->size() > 0)
 			this->allocator.destroy(--(this->_finish));
+			printf(this->size);
+		
 	}
 	void swap(vector &x)
 	{

@@ -50,7 +50,10 @@
 		"__tree": "cpp",
 		"list": "cpp",
 		"ctime": "cpp",
-		"__config": "cpp"
+		"__config": "cpp",
+		"__node_handle": "cpp",
+		"__split_buffer": "cpp",
+		"set": "cpp"
 	},
 	  // The prefix that is used for each comment line except for first and last.
 	  "doxdocgen.c.commentPrefix": " * ",
