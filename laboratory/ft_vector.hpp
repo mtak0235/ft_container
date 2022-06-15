@@ -61,7 +61,7 @@ public:
 	/**
 	 * @brief range 생성자
 	 * point! : template meta programming에서 if문은 템플릿 특수화를 통해 구현됨
-	 * @tparam InputIterator 
+	 * @param InputIterator 
 	 * @param first 첫 element를 가리키는 iterator
 	 * @param last  마지막 다음을 가리키는 iterator
 	 * @param allocator 
@@ -71,8 +71,8 @@ public:
 	typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		: _begin(NULL), _size(0), _allocator(allocator)
 	{
-		difference_type d = ft::dis
-		if (first > last)
+		difference_type d = ft::distance(first, last);
+		if (first > last || )
 			throw std::length_error("vector");
 		
 		this->clear();
