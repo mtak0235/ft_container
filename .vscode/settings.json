@@ -53,7 +53,12 @@
 		"__config": "cpp",
 		"__node_handle": "cpp",
 		"__split_buffer": "cpp",
-		"set": "cpp"
+		"set": "cpp",
+		"__debug": "cpp",
+		"bitset": "cpp",
+		"chrono": "cpp",
+		"locale": "cpp",
+		"mutex": "cpp"
 	},
 	  // The prefix that is used for each comment line except for first and last.
 	  "doxdocgen.c.commentPrefix": " * ",
