@@ -58,7 +58,9 @@
 		"bitset": "cpp",
 		"chrono": "cpp",
 		"locale": "cpp",
-		"mutex": "cpp"
+		"mutex": "cpp",
+		"queue": "cpp",
+		"stack": "cpp"
 	},
 	  // The prefix that is used for each comment line except for first and last.
 	  "doxdocgen.c.commentPrefix": " * ",

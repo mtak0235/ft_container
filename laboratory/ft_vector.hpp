@@ -45,7 +45,7 @@ namespace ft
 		 * @param allocator
 		 */
 		explicit vector(size_type n, const value_type &val = value_type(), const allocator_type &allocator = allocator_type())
-			: _begin(NULL), _allocator(allocator)
+			: _allocator(allocator)
 		{
 			if (n > 0)
 			{
@@ -54,7 +54,7 @@ namespace ft
 				_size = n;
 				_capacity = n;
 				_begin = _allocator.allocate(n);
-				for (pointer i = _begin; i < _size; i++)
+				for (pointer i = _begin; i < _begin + size; i++)
 					_allocator.construct(i, val);
 			}
 		}
@@ -69,14 +69,16 @@ namespace ft
 		template <class InputIterator>
 		vector(InputIterator first, InputIterator last, const allocator_type &allocator = allocator_type(),
 			   typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type * = 0)
-			: _begin(NULL), _size(0), _allocator(allocator)
+			: _size(0), _allocator(allocator)
 		{
 			difference_type d = ft::distance(first, last);
-			if (first > last)
+			if (d < 0 || d > static_cast<difference_type>(_allocator.max_size()))
 				throw std::length_error("vector");
-
-			this->clear();
-			this->insert(this->begin(), first, last);
+			_begin = _allocator.allocate(d);
+			while (first != last) {
+				this->push_back(*first);
+				first++;
+			}
 		}
 		/**
 		 * @brief 복사 생성자
@@ -88,14 +90,16 @@ namespace ft
 		 * @copyright Copyright (c) 2022
 		 */
 		vector(const vector &source)
-			: _begin(NULL), _size(0), _allocator(source._allocator)
+			: _size(0), _capacity(source._size)
 		{
-			insert(begin(), source.begin(), source.end());
+			_begin = _allocator.allocate(_capacity)
+			for (size_type i = 0; i < x.size(); i++)
+				push_back(source[i]);
 		}
-
+//vector 의 소멸자가 destriy를 호출하고 destroy는 소멸자를 호출하네..? 무한의 피쿠루인가 왜되지
 		~vector()
 		{
-			_allocator.deallocate(_start, capacity());
+			clear();
 		}
 		/**
 		 * @brief 대입 연산자
@@ -107,28 +111,33 @@ namespace ft
 		 * @date 2022-06-16
 		 * @copyright Copyright (c) 2022
 		 */
-		vector &operator=(const vector &x)
+		vector &operator=(const vector &source)
 		{
-			if (this != &x)
+			if (this != &source)
 			{
-				//채워야됨
+				clear();
 				this->assign(x.begin(), x.end());
+				_capacity = source._capacity;
+				_begin = _allocator.allocate(_capacity);
+				for (size_type i = 0; i < source._capacity; i++) {
+					_allocator.construct(_begin + i, source._begin + i);
+				}
 			}
 			return *this;
 		}
 
 		/* Iterator */
-		iterator begin() { return iterator(_start); }
-		const_iterator begin() const { return const_iterator(_start); }
-		iterator end() { return iterator(_finish); }
-		const_iterator end() const { return const_iterator(_finish); }
-		reverse_iterator rbegin() { return reverse_iterator(end();) }
+		iterator begin() { return iterator(_begin); }
+		const_iterator begin() const { return const_iterator(_begin); }
+		iterator end() { return iterator(_begin + _size); }
+		const_iterator end() const { return const_iterator(_begin + _size); }
+		reverse_iterator rbegin() { return reverse_iterator(end()); }
 		const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
 		reverse_iterator rend() { return reverse_iterator(begin()); }
-		const_reverse_iterator rend() const { return const_reverse_iterator(end()); }
+		const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
 		/* capacity */
-		size_type size() const { return size_type(_finish - _start); }
+		size_type size() const { return _size; }
 		size_type max_size() const
 		{
 			const size_t nmax = std::numeric_limits<size_type>::max();
@@ -141,18 +150,18 @@ namespace ft
 		}
 		size_type capacity() const
 		{
-			return _end_of_cap - _start;
+			return _end_of_cap - _begin;
 		}
 		void reserve(size_type n)
 		{
 			if (n > capacity())
 			{
-				pointer tmpStart = _start;
+				pointer tmpStart = _begin;
 				pointer tmpFinish = _finish;
 				size_type tmpSize = size();
 				size_type tmpCap = capacity();
-				_start = _allocator.allocate(n);
-				_end_of_cap = _start + n;
+				_begin = _allocator.allocate(n);
+				_end_of_cap = _begin + n;
 				while (tmpStart != tmpFinish)
 				{
 					_allocator.construct(_finish, *tmpStart);
@@ -191,9 +200,9 @@ namespace ft
 			}
 			else
 			{
-				_allocator.deallocate(_start, capacity());
-				_start = _finish = _allocator.allocate(n);
-				_end_of_cap = _start + n;
+				_allocator.deallocate(_begin, capacity());
+				_begin = _finish = _allocator.allocate(n);
+				_end_of_cap = _begin + n;
 				while (n--)
 				{
 					_allocator.construct(_finish++, val);
@@ -280,24 +289,29 @@ namespace ft
 		{
 			if (x == *this)
 				return;
-			pointer tmpStart = _start;
+			pointer tmpStart = _begin;
 			pointer tmpFinish = _finish;
 			size_type tmpEndOfCap = _end_of_cap;
 			allocator_type tmpAlloc = _allocator;
-			_start = x._start;
+			_begin = x._begin;
 			_finish = x._finish;
 			_end_of_cap = x._end_of_cap;
 			_allocator = x._allocator;
-			x._start = tmpStart;
+			x._begin = tmpStart;
 			x._finish = tmpFinish;
 			x._end_of_cap = tmpEndOfCap;
 			x._allocator = tmpAlloc;
 		}
 		void clear()
 		{
-			while (this->size() > 0)
-				this->allocator.destroy(--(this->_finish));
-			printf(this->size);
+			if (_begin) {
+				for (size_type i = 0; i < _size; i++)
+					this->allocator.destroy(_begin + i);
+				_allocator.deallocate(_begin, _capacity);
+			}
+			_begin = 0;
+			_capacity = 0;
+			_size = 0;
 		}
 		
 		/* allocator */

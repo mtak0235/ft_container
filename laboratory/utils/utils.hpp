@@ -21,6 +21,32 @@ struct enable_if<true, T>
 	typedef T type;
 };
 
+/**
+ * @brief 두 iterator의 거리 구하기
+ * 
+ * @tparam InputIterator 
+ * @param first 
+ * @param last 
+ * @return iterator_traits<InputIterator>::difference_type 
+ * @version 0.1
+ * @author your name (you@domain.com)
+ * @date 2022-06-16
+ * @copyright Copyright (c) 2022
+ */
+template<class InputIterator>
+typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last) {
+	typename iterator_traits<InputIterator>::difference_type cnt = 0;
+	while (first != last) {
+		cnt++;
+		first++;
+	}
+	return cnt;
+}
+
+template<class InputIterator>
+typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last, random_access_iterator_tag) {
+	return last - first;
+}
 
 } // namespace ft
 
