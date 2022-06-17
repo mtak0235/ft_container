@@ -62,7 +62,7 @@ namespace ft
 			--current_value;
 			return *this;
 		}
-		vector_iterator operator++(){
+		vector_iterator operator++(int){
 			vector_iterator t(*this);
 			this->current_value++;
 			return t;

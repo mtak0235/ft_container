@@ -6,7 +6,7 @@
 namespace ft
 {
 	template <class Iterator>
-	class reverse_iterator : public iterator<ft::random_access_iterator_tag, Iterator>
+	class reverse_iterator :
 	{
 	public:
 		typedef Iterator iterator_type;

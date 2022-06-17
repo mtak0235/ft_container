@@ -4,6 +4,7 @@
 #include <memory>
 #include "iterator/iterator.hpp"
 #include "iterator/vector_iterator.hpp"
+#include "iterator/reverse_iterator.hpp"
 #include "utils/utils.hpp"
 
 namespace ft
@@ -96,7 +97,6 @@ namespace ft
 			for (size_type i = 0; i < x.size(); i++)
 				push_back(source[i]);
 		}
-//vector 의 소멸자가 destriy를 호출하고 destroy는 소멸자를 호출하네..? 무한의 피쿠루인가 왜되지
 		~vector()
 		{
 			clear();
@@ -119,9 +119,10 @@ namespace ft
 				this->assign(x.begin(), x.end());
 				_capacity = source._capacity;
 				_begin = _allocator.allocate(_capacity);
-				for (size_type i = 0; i < source._capacity; i++) {
+				for (size_type i = 0; i < source.size(); i++) {
 					_allocator.construct(_begin + i, source._begin + i);
 				}
+				_size = source.size();
 			}
 			return *this;
 		}
@@ -147,24 +148,26 @@ namespace ft
 		bool empty() const { return begin() == end() }
 		void resize(size_type n, value_type val = value_type())
 		{
+			if (n < _size)
+				while (_size > n)
+					pop_back();
+			else
+				while (_size < n)
+					push_back(val);
+
 		}
-		size_type capacity() const
+		size_type capacity() const {return _capacity;}
+		void reserve(size_type new_cap)
 		{
-			return _end_of_cap - _begin;
-		}
-		void reserve(size_type n)
-		{
-			if (n > capacity())
+			if (new_cap > capacity())
 			{
-				pointer tmpStart = _begin;
-				pointer tmpFinish = _finish;
+				pointer tmp = _allocator.allocate(new_cap);
 				size_type tmpSize = size();
 				size_type tmpCap = capacity();
-				_begin = _allocator.allocate(n);
-				_end_of_cap = _begin + n;
-				while (tmpStart != tmpFinish)
-				{
-					_allocator.construct(_finish, *tmpStart);
+				
+				for (size_type i = 0; i < size(); i++) {
+					_allocator.construct(tmp + i, _begin[i]);
+					_allocator.destroy(_begin[i]);
 					_finish++;
 					tmpStart++;
 				}
