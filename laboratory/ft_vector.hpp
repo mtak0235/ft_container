@@ -100,6 +100,7 @@ namespace ft
 		~vector()
 		{
 			clear();
+			_allocator.deallocate(_begin, _capacity);
 		}
 		/**
 		 * @brief 대입 연산자
@@ -162,16 +163,16 @@ namespace ft
 			if (new_cap > capacity())
 			{
 				pointer tmp = _allocator.allocate(new_cap);
-				size_type tmpSize = size();
-				size_type tmpCap = capacity();
-				
+				// size_type tmpSize = size();
+				// size_type tmpCap = capacity();
 				for (size_type i = 0; i < size(); i++) {
 					_allocator.construct(tmp + i, _begin[i]);
 					_allocator.destroy(_begin[i]);
-					_finish++;
-					tmpStart++;
 				}
-				_allocator.deallocate(tmpFinish - tmpSize, tmpCap);
+				if (_capacity != 0)
+					_allocator.deallocate(_begin, _capacity);
+				_begin = tmp;
+				_capacity = new_cap;
 			}
 		}
 
@@ -310,10 +311,8 @@ namespace ft
 			if (_begin) {
 				for (size_type i = 0; i < _size; i++)
 					this->allocator.destroy(_begin + i);
-				_allocator.deallocate(_begin, _capacity);
 			}
 			_begin = 0;
-			_capacity = 0;
 			_size = 0;
 		}
 		
