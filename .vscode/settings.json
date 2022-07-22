@@ -60,7 +60,20 @@
 		"locale": "cpp",
 		"mutex": "cpp",
 		"queue": "cpp",
-		"stack": "cpp"
+		"stack": "cpp",
+		"__errc": "cpp",
+		"__functional_base": "cpp",
+		"__locale": "cpp",
+		"__mutex_base": "cpp",
+		"__nullptr": "cpp",
+		"__string": "cpp",
+		"__threading_support": "cpp",
+		"__tuple": "cpp",
+		"complex": "cpp",
+		"cstring": "cpp",
+		"iomanip": "cpp",
+		"ios": "cpp",
+		"ratio": "cpp"
 	},
 	  // The prefix that is used for each comment line except for first and last.
 	  "doxdocgen.c.commentPrefix": " * ",
